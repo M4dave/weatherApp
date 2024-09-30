@@ -32,6 +32,13 @@ const Input = ({ setQuery, setUnits }) => {
     }
   };
 
+  // Function to handle key press in the input field
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
+    }
+  };
+
   return (
     <div className="flex flex-row justify-center my-6">
       <div className="flex flex-row w-3/4 items-center justify-center space-x-4">
@@ -39,6 +46,7 @@ const Input = ({ setQuery, setUnits }) => {
         <input
           value={city}
           onChange={(e) => setCity(e.currentTarget.value)} // Update city state on input change
+          onKeyPress={handleKeyPress} // Handle key press event
           type="text"
           id="searchInput" // Unique ID for the input field
           placeholder="Search by City..."
