@@ -1,62 +1,80 @@
 import { useState } from "react";
 import { BiSearch, BiCurrentLocation } from "react-icons/bi";
 
+// Input component for searching weather by city or current location
 const Input = ({ setQuery, setUnits }) => {
+  // State to hold the current city name
   const [city, setCity] = useState("");
 
+  // Function to handle search button click
   const handleSearchClick = () => {
-    if (city !== "") setQuery({ q: city });
+    // If the city input is not empty, set the query with the city name
+    if (city !== "") {
+      setQuery({ q: city });
+    }
+    // Clear the city input field
     setCity("");
   };
 
+  // Function to handle the current location button click
   const handleLocationClick = () => {
+    // Check if geolocation is supported by the browser
     if (navigator.geolocation) {
+      // Get the current position of the user
       navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords; // Fixed typo from 'longtitude' to 'longitude'
+        // Destructure latitude and longitude from the position
+        const { latitude, longitude } = position.coords;
+        // Set the query with the user's current latitude and longitude
         setQuery({ lat: latitude, lon: longitude });
+        // Clear the city input field
         setCity("");
       });
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center my-6">
-      <div className="flex flex-row w-full md:w-3/4 items-center justify-center space-x-4">
+    <div className="flex flex-row justify-center my-6">
+      <div className="flex flex-row w-3/4 items-center justify-center space-x-4">
+        {/* Input field for city name */}
         <input
           value={city}
-          onChange={(e) => setCity(e.currentTarget.value)}
+          onChange={(e) => setCity(e.currentTarget.value)} // Update city state on input change
           type="text"
           id="searchInput" // Unique ID for the input field
           placeholder="Search by City..."
           className="text-gray-500 text-xl font-light p-2 w-full shadow-xl capitalize focus:outline-none placeholder-lowercase"
         />
+        {/* Search button using an icon */}
         <BiSearch
           size={30}
           className="cursor-pointer transition ease-out hover:scale-125"
-          onClick={handleSearchClick}
+          onClick={handleSearchClick} // Trigger search when clicked
         />
+        {/* Current location button using an icon */}
         <BiCurrentLocation
           size={30}
           className="cursor-pointer transition ease-out hover:scale-125"
-          onClick={handleLocationClick}
+          onClick={handleLocationClick} // Trigger location fetch when clicked
         />
-      </div>
-      <div className="flex flex-row w-full md:w-1/4 items-center justify-center mt-4 md:mt-0">
-        <button
-          id="celsius"
-          className="text-2xl font-medium transition ease-out hover:scale-125"
-          onClick={() => setUnits("metric")}
-        >
-          &deg;C
-        </button>
-        <p className="text-2xl font-medium mx-1">|</p>
-        <button
-          id="fahrenheit"
-          className="text-2xl font-medium transition ease-out hover:scale-125"
-          onClick={() => setUnits("imperial")}
-        >
-          &deg;F
-        </button>
+        <div className="flex flex-row w-1/4 items-center justify-center">
+          {/* Button to switch to Celsius */}
+          <button
+            id="celsius"
+            className="text-2xl font-medium transition ease-out hover:scale-125"
+            onClick={() => setUnits("metric")} // Set units to metric
+          >
+            &deg;C
+          </button>
+          <p className="text-2xl font-medium mx-1">|</p>
+          {/* Button to switch to Fahrenheit */}
+          <button
+            id="fahrenheit"
+            className="text-2xl font-medium transition ease-out hover:scale-125"
+            onClick={() => setUnits("imperial")} // Set units to imperial
+          >
+            &deg;F
+          </button>
+        </div>
       </div>
     </div>
   );
