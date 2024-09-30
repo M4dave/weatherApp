@@ -1,11 +1,13 @@
 // import PropTypes from "prop-types";
 import React from "react";
 
+
 const Forecast = ({ title, data }) => {
   // Check if data is undefined or null, render a message if true
   if (!data || data.length === 0) {
     return <p>No forecast data available</p>;
   }
+  
   return (
     <>
       {/* Title section */}
@@ -17,12 +19,12 @@ const Forecast = ({ title, data }) => {
       <hr className="my-1" />
 
       {/* Data section */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between">
         {/* Mapping over the data array */}
         {data.map((d, index) => (
           <div
             key={index}
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 p-2"
           >
             {/* Displaying weather data */}
             <p className="font-light text-start">{d.title}</p>
@@ -33,17 +35,6 @@ const Forecast = ({ title, data }) => {
       </div>
     </>
   );
-
-  // Forecast.propTypes = {
-  //   title: PropTypes.string.isRequired,
-  //   data: PropTypes.arrayOf(
-  //     PropTypes.shape({
-  //       title: PropTypes.string.isRequired,
-  //       icon: PropTypes.string.isRequired,
-  //       temp: PropTypes.number.isRequired,
-  //     })
-  //   ),
 };
 
 export default Forecast;
-

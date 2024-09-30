@@ -13,12 +13,12 @@ const TopButtons = ({ setQuery }) => {
 
   return (
     // Flex container for aligning buttons
-    <div className="flex items-center justify-around my-6">
+    <div className="flex flex-wrap items-center justify-center my-6 space-x-2 space-y-2 md:space-x-4">
       {cities.map((city) => (
         // Render a button for each city
         <button
           key={city.id} // Unique key for React's reconciliation
-          className="text-lg font-medium hover:bg-gray-700/20 px-3 py-2 rounded-md transition ease-in"
+          className="text-lg font-medium hover:bg-gray-700/20 px-4 py-2 rounded-md transition ease-in"
           onClick={() => setQuery({ q: city.name })} // Set query on button click
         >
           {city.name} {/* Button label displaying the city name */}
@@ -31,8 +31,6 @@ const TopButtons = ({ setQuery }) => {
 // PropTypes to validate the component's props
 TopButtons.propTypes = {
   setQuery: PropTypes.func.isRequired, // setQuery must be a function
-  // buttonProps: PropTypes.object, // Optional: could be used for additional button properties
 };
 
-// Export the TopButtons component for use in other parts of the app
 export default TopButtons;

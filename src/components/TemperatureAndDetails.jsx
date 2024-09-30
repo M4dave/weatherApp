@@ -29,7 +29,7 @@ const TemperatureAndDetails = ({
     {
       id: 2,
       Icon: BiSolidDropletHalf,
-      title: "Humiditity",
+      title: "Humidity",
       value: `${humidity.toFixed()}%`,
     },
     {
@@ -56,19 +56,20 @@ const TemperatureAndDetails = ({
       value: `${temp_min.toFixed()}\u00B0`,
     },
   ];
+
   return (
-    <div>
+    <div className="px-4 md:px-0">
       <div className="flex items-center justify-center py-6 text-xl text-cyan-300">
         <p>{details}</p>
       </div>
-      <div className="flex flex-row items-center justify-between py-3">
-        <img src={icon} alt="weather icon" className="w-20" />
-        <p className="text-5x1">{`${temp.toFixed()}\u00B0`}</p>
-        <div className="flex flex-col space-y-3 items-start">
+      <div className="flex flex-col md:flex-row items-center justify-between py-3">
+        <img src={icon} alt="weather icon" className="w-20 md:w-32" />
+        <p className="text-5xl">{`${temp.toFixed()}\u00B0`}</p>
+        <div className="flex flex-col space-y-3 items-start mt-4 md:mt-0">
           {verticalDetails.map(({ id, Icon, title, value }) => (
             <div
               key={id}
-              className="flex font-light text-sm items-center justify-center"
+              className="flex font-light text-sm items-center justify-start"
             >
               <Icon size={18} className="mr-1" />
               {`${title}:`}
@@ -77,11 +78,11 @@ const TemperatureAndDetails = ({
           ))}
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center space-x-10 text-sm py-3">
-        {horizonDetails.map(({ id, icon, title, value }) => (
+      <div className="flex flex-col md:flex-row items-center justify-center text-sm py-3 space-y-3 md:space-y-0 md:space-x-10">
+        {horizonDetails.map(({ id, Icon, title, value }) => (
           <div key={id} className="flex flex-row items-center">
-            <FaThermometerEmpty size={30} />
-            <p className="font-light ml-1">
+            <Icon size={30} className="mr-1" />
+            <p className="font-light">
               {`${title}:`} <span className="font-medium ml-1">{value}</span>
             </p>
           </div>
