@@ -8,6 +8,8 @@ const BASE_URL = "https://api.openweathermap.org/data/2.5/";
 const getWeatherData = async (infoType, searchParams) => {
   const url = new URL(BASE_URL + infoType);
   url.search = new URLSearchParams({ ...searchParams, appid: API_KEY });
+  console.log("Fetching weather data with API key:", API_KEY);
+  console.log("Request URL:", url.toString());
 
   try {
     const res = await fetch(url);
@@ -27,8 +29,11 @@ const iconUrlFromCode = (icon) =>
   `http://openweathermap.org/img/wn/${icon}@2x.png`;
 
 // Function to format epoch time to local time
-const formatToLocalTime = (secs, offset, format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a") =>
-  DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
+const formatToLocalTime = (
+  secs,
+  offset,
+  format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a"
+) => DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat(format);
 
 // Function to format current weather data
 const formatCurrent = (data) => {
@@ -54,8 +59,8 @@ const formatCurrent = (data) => {
     humidity,
     name,
     country,
-    sunrise: formatToLocalTime(sunrise, timezone, 'hh:mm a'),
-    sunset: formatToLocalTime(sunset, timezone, 'hh:mm a'),
+    sunrise: formatToLocalTime(sunrise, timezone, "hh:mm a"),
+    sunset: formatToLocalTime(sunset, timezone, "hh:mm a"),
     details,
     speed,
     icon: iconUrlFromCode(icon),
@@ -78,7 +83,7 @@ const formatForecastWeather = (secs, offset, data) => {
       date: f.dt_txt,
     }))
     .slice(0, 5);
-  
+
   const daily = data
     .filter((f) => f.dt_txt.slice(-8) === "00:00:00")
     .map((f) => ({
@@ -94,11 +99,16 @@ const formatForecastWeather = (secs, offset, data) => {
 // Function to get formatted weather data (current and forecast)
 const getFormattedWeatherData = async (searchParams) => {
   if (!API_KEY) {
-    throw new Error("API key is missing. Please set the VITE_OPENWEATHERMAP_API_KEY environment variable.");
+    throw new Error(
+      "API key is missing. Please set the VITE_OPENWEATHERMAP_API_KEY environment variable."
+    );
   }
 
   try {
-    const formattedCurrentWeather = await getWeatherData("weather", searchParams).then(formatCurrent);
+    const formattedCurrentWeather = await getWeatherData(
+      "weather",
+      searchParams
+    ).then(formatCurrent);
     const { dt, lat, lon, timezone } = formattedCurrentWeather;
 
     const formattedForecastWeather = await getWeatherData("forecast", {
