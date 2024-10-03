@@ -12,14 +12,16 @@ const TopButtons = ({ setQuery }) => {
   ];
 
   return (
-    // Flex container for aligning buttons
-    <div className="flex flex-wrap items-center justify-center my-6 space-x-2 space-y-2 md:space-x-4">
+    <div className="flex flex-wrap justify-center gap-4 my-6">
       {cities.map((city) => (
-        // Render a button for each city
         <button
           key={city.id} // Unique key for React's reconciliation
-          className="text-lg font-medium hover:bg-gray-700/20 px-4 py-2 rounded-md transition ease-in"
+          className="text-lg font-medium bg-gray-800 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 px-6 py-3 rounded-lg transition transform hover:scale-105 ease-in-out duration-300 shadow-md hover:shadow-lg"
+          style={{
+            minWidth: "120px", // Ensure minimum width for uniform buttons
+          }}
           onClick={() => setQuery({ q: city.name })} // Set query on button click
+          aria-label={`Search weather in ${city.name}`} // Accessibility enhancement
         >
           {city.name} {/* Button label displaying the city name */}
         </button>

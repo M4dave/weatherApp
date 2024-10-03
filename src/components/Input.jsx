@@ -27,7 +27,7 @@ const Input = ({ setQuery, setUnits }) => {
 
   // Function to handle key press in the input field
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearchClick();
     }
   };
