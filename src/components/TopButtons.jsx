@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 
 const CITIES = [
-  { id: 1, name: "Manila",   flag: "🇵🇭" },
-  { id: 2, name: "Tokyo",    flag: "🇯🇵" },
-  { id: 3, name: "New York", flag: "🇺🇸" },
-  { id: 4, name: "London",   flag: "🇬🇧" },
-  { id: 5, name: "Dubai",    flag: "🇦🇪" },
+  { id: 1, name: "Manila",   code: "ph" },
+  { id: 2, name: "Tokyo",    code: "jp" },
+  { id: 3, name: "New York", code: "us" },
+  { id: 4, name: "London",   code: "gb" },
+  { id: 5, name: "Dubai",    code: "ae" },
 ];
 
 const TopButtons = ({ setQuery, onSelect }) => (
@@ -20,7 +20,10 @@ const TopButtons = ({ setQuery, onSelect }) => (
           hover:border-[#f0c030]/65 hover:text-[#f0c030] hover:bg-[#f0c030]/5
           transition-all duration-150 active:scale-95 focus:outline-none"
       >
-        <span className="text-sm leading-none">{city.flag}</span>
+        <span
+          className={`fi fi-${city.code}`}
+          style={{ width: 18, height: 14, display: "inline-block", borderRadius: "2px", flexShrink: 0 }}
+        />
         <span className="font-barlow font-semibold">{city.name}</span>
         <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t-2 border-l-2 border-[#f0c030]/30 group-hover:border-[#f0c030]" />
         <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b-2 border-r-2 border-[#f0c030]/30 group-hover:border-[#f0c030]" />

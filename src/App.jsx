@@ -28,11 +28,14 @@ const Star = ({ size = 16, style = {} }) => (
   </svg>
 );
 
-// Convert ISO 3166-1 alpha-2 country code to flag emoji
-const countryFlag = (code) => {
-  if (!code || code.length !== 2) return "";
-  return code.toUpperCase().replace(/./g, (c) =>
-    String.fromCodePoint(0x1F1E6 - 65 + c.charCodeAt(0))
+// Flag icon using flag-icons CSS library (works on all browsers incl. Windows)
+const FlagIcon = ({ code, size = 20 }) => {
+  if (!code || code.length !== 2) return null;
+  return (
+    <span
+      className={`fi fi-${code.toLowerCase()}`}
+      style={{ width: size, height: size * 0.75, display: "inline-block", borderRadius: "2px", flexShrink: 0 }}
+    />
   );
 };
 
@@ -92,7 +95,7 @@ const App = () => {
   const windUnit = units === "metric" ? "m/s" : "mph";
 
   return (
-    <div className="min-h-screen bg-[#0a0806] flex flex-col" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+    <div className="min-h-screen bg-[#0a0806] flex flex-col overflow-x-hidden" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
 
       {/* ═══ NAV BAR ═══ */}
       <div style={{ background: "rgba(8,6,4,0.97)", borderBottom: "1px solid rgba(240,192,48,0.2)" }}>
@@ -119,7 +122,7 @@ const App = () => {
           {weather && (
             <div className="hidden sm:flex items-center gap-2 shrink-0 px-3 py-1 mr-1"
               style={{ border: "1px solid rgba(240,192,48,0.2)", background: "rgba(240,192,48,0.04)" }}>
-              <span className="text-lg leading-none">{countryFlag(weather.country)}</span>
+              <FlagIcon code={weather.country} size={22} />
               <span className="font-bebas text-base tracking-wider" style={{ color: "#f0c030" }}>{weather.name}</span>
               <span className="font-barlow text-xs font-semibold" style={{ color: "rgba(240,192,48,0.45)" }}>{weather.country}</span>
             </div>
@@ -168,7 +171,7 @@ const App = () => {
             {weather && (
               <div className="flex items-center gap-2 mt-3 mb-2 px-2 py-1.5 w-fit"
                 style={{ border: "1px solid rgba(240,192,48,0.2)", background: "rgba(240,192,48,0.04)" }}>
-                <span className="text-lg leading-none">{countryFlag(weather.country)}</span>
+                <FlagIcon code={weather.country} size={22} />
                 <span className="font-bebas text-base tracking-wider" style={{ color: "#f0c030" }}>{weather.name}</span>
                 <span className="font-barlow text-xs font-semibold" style={{ color: "rgba(240,192,48,0.45)" }}>{weather.country}</span>
               </div>
