@@ -38,6 +38,7 @@ const App = () => {
   const [weather, setWeather]     = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [tick, setTick]           = useState(0);
+  const [is24Hour, setIs24Hour]   = useState(false);
   const [notif, setNotif]         = useState(null);
   const notifTimer                = useRef(null);
 
@@ -70,7 +71,7 @@ const App = () => {
   useEffect(() => { getWeather(); }, [getWeather]);
 
   const now     = new Date();
-  const timeStr = now.toLocaleTimeString("en-US", { hour12: false });
+  const timeStr = now.toLocaleTimeString("en-US", { hour12: !is24Hour });
   const dateStr = now.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
 
   const windUnit  = units === "metric" ? "m/s" : "mph";
@@ -103,10 +104,24 @@ const App = () => {
 
           <div className="h-5 w-px hidden md:block" style={{ background: "rgba(240,192,48,0.2)" }} />
 
-          {/* Clock */}
-          <div className="hidden md:flex flex-col items-end shrink-0">
+          {/* Clock + 12/24 toggle */}
+          <div className="hidden md:flex flex-col items-end shrink-0 gap-1">
             <span className="font-bebas text-lg tracking-wider gold-text">{timeStr}</span>
-            <span className="font-barlow text-xs" style={{ color: "rgba(240,192,48,0.4)" }}>{dateStr}</span>
+            <div className="flex items-center gap-1">
+              <span className="font-barlow text-xs" style={{ color: "rgba(240,192,48,0.4)" }}>{dateStr}</span>
+              <button
+                onClick={() => setIs24Hour((v) => !v)}
+                className="font-bebas text-xs px-1.5 py-0.5 tracking-wider transition-all duration-150 ml-2"
+                style={{
+                  color: is24Hour ? "#0a0806" : "#f0c030",
+                  background: is24Hour ? "#f0c030" : "transparent",
+                  border: "1px solid rgba(240,192,48,0.4)",
+                }}
+                aria-label="Toggle 12/24 hour clock"
+              >
+                {is24Hour ? "24H" : "12H"}
+              </button>
+            </div>
           </div>
 
           <span className="blink font-bebas text-base ml-1" style={{ color: "#e8192c" }}>●</span>
