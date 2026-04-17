@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 const GEO_URL = "https://api.openweathermap.org/geo/1.0/direct";
 const API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
 
-const Input = ({ setQuery, units, setUnits, compact = false }) => {
+const Input = ({ setQuery, units, setUnits, compact = false, mobileMinimal = false }) => {
   const [city, setCity]           = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -172,29 +172,33 @@ const Input = ({ setQuery, units, setUnits, compact = false }) => {
         </div>
 
         <button onClick={handleSearch}
-          className="p-2.5 border border-[#f0c030]/20 hover:border-[#f0c030]/60 bg-[#0a0806] hover:bg-[#f0c030]/5 transition-all duration-150 active:scale-95"
+          className="p-2 border border-[#f0c030]/20 hover:border-[#f0c030]/60 bg-[#0a0806] hover:bg-[#f0c030]/5 transition-all duration-150 active:scale-95 shrink-0"
           style={{ color: "rgba(240,192,48,0.5)" }} aria-label="Search">
-          <BiSearch size={18} />
+          <BiSearch size={16} />
         </button>
 
-        <button onClick={handleLocationClick}
-          className="p-2.5 border border-[#f0c030]/20 hover:border-[#f0c030]/60 bg-[#0a0806] hover:bg-[#f0c030]/5 transition-all duration-150 active:scale-95"
-          style={{ color: "rgba(240,192,48,0.5)" }} aria-label="GPS">
-          <BiCurrentLocation size={18} />
-        </button>
+        {!mobileMinimal && (
+          <button onClick={handleLocationClick}
+            className="p-2 border border-[#f0c030]/20 hover:border-[#f0c030]/60 bg-[#0a0806] hover:bg-[#f0c030]/5 transition-all duration-150 active:scale-95 shrink-0"
+            style={{ color: "rgba(240,192,48,0.5)" }} aria-label="GPS">
+            <BiCurrentLocation size={16} />
+          </button>
+        )}
 
-        <div className="flex border border-[#f0c030]/20 overflow-hidden">
-          {["metric","imperial"].map((u) => (
-            <button key={u} onClick={() => setUnits(u)}
-              className={`px-3 py-2.5 text-xs font-bebas tracking-[0.2em] transition-all duration-150 ${
-                units === u
-                  ? "bg-[#f0c030] text-[#0a0806]"
-                  : "bg-[#0a0806] hover:bg-[#f0c030]/8"}`}
-              style={{ color: units === u ? "#0a0806" : "rgba(240,192,48,0.4)" }}>
-              {u === "metric" ? "°C" : "°F"}
-            </button>
-          ))}
-        </div>
+        {!mobileMinimal && (
+          <div className="flex border border-[#f0c030]/20 overflow-hidden shrink-0">
+            {["metric","imperial"].map((u) => (
+              <button key={u} onClick={() => setUnits(u)}
+                className={`px-2.5 py-2 text-xs font-bebas tracking-[0.2em] transition-all duration-150 ${
+                  units === u
+                    ? "bg-[#f0c030] text-[#0a0806]"
+                    : "bg-[#0a0806] hover:bg-[#f0c030]/8"}`}
+                style={{ color: units === u ? "#0a0806" : "rgba(240,192,48,0.4)" }}>
+                {u === "metric" ? "°C" : "°F"}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -205,5 +209,6 @@ Input.propTypes = {
   units: PropTypes.string.isRequired,
   setUnits: PropTypes.func.isRequired,
   compact: PropTypes.bool,
+  mobileMinimal: PropTypes.bool,
 };
 export default Input;

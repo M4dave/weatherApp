@@ -101,13 +101,15 @@ const App = () => {
       <div style={{ background: "rgba(8,6,4,0.97)", borderBottom: "1px solid rgba(240,192,48,0.2)" }}>
 
         {/* Main nav row */}
-        <div className="flex items-center gap-3 px-4 py-2.5">
+        <div className="flex items-center gap-2 px-3 py-2">
 
-          {/* Brand — always visible */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Star size={13} style={{ color: "#f0c030", filter: "drop-shadow(0 0 4px rgba(240,192,48,0.6))" }} />
-            <span className="font-bebas text-lg sm:text-xl tracking-[0.2em] gold-text">WEATHER INTEL</span>
-            <Star size={13} style={{ color: "#f0c030", filter: "drop-shadow(0 0 4px rgba(240,192,48,0.6))" }} />
+          {/* Brand — always visible, tighter on mobile */}
+          <div className="flex items-center gap-1 shrink-0">
+            <Star size={12} style={{ color: "#f0c030", filter: "drop-shadow(0 0 4px rgba(240,192,48,0.6))" }} />
+            <span className="font-bebas text-base sm:text-xl tracking-wider sm:tracking-[0.2em] gold-text whitespace-nowrap">
+              WEATHER INTEL
+            </span>
+            <Star size={12} style={{ color: "#f0c030", filter: "drop-shadow(0 0 4px rgba(240,192,48,0.6))" }} />
           </div>
 
           {/* City buttons — hidden on small screens, shown md+ */}
@@ -116,24 +118,24 @@ const App = () => {
             <TopButtons setQuery={setQuery} />
           </div>
 
-          <div className="flex-1" />
+          <div className="flex-1 min-w-0" />
 
-          {/* Current city indicator — flag + name, visible when weather loaded */}
+          {/* Current city indicator — only sm+ since mobile uses dropdown */}
           {weather && (
-            <div className="hidden sm:flex items-center gap-2 shrink-0 px-3 py-1 mr-1"
+            <div className="hidden sm:flex items-center gap-1.5 shrink-0 px-2.5 py-1 mr-1"
               style={{ border: "1px solid rgba(240,192,48,0.2)", background: "rgba(240,192,48,0.04)" }}>
-              <FlagIcon code={weather.country} size={22} />
-              <span className="font-bebas text-base tracking-wider" style={{ color: "#f0c030" }}>{weather.name}</span>
-              <span className="font-barlow text-xs font-semibold" style={{ color: "rgba(240,192,48,0.45)" }}>{weather.country}</span>
+              <FlagIcon code={weather.country} size={18} />
+              <span className="font-bebas text-sm tracking-wider" style={{ color: "#f0c030" }}>{weather.name}</span>
+              <span className="font-barlow text-xs font-semibold" style={{ color: "rgba(240,192,48,0.4)" }}>{weather.country}</span>
             </div>
           )}
 
-          {/* Search — always visible but shrinks */}
-          <div className="shrink-0 max-w-[180px] sm:max-w-[240px] md:max-w-none">
-            <Input setQuery={setQuery} units={units} setUnits={setUnits} compact />
+          {/* Search — on mobile show only the text input, hide GPS + units (they're in dropdown) */}
+          <div className="shrink-0 min-w-0" style={{ width: "clamp(110px, 35vw, 240px)" }}>
+            <Input setQuery={setQuery} units={units} setUnits={setUnits} compact mobileMinimal />
           </div>
 
-          {/* Clock + toggle — hidden on small screens */}
+          {/* Clock + toggle — desktop only */}
           <div className="hidden lg:flex flex-col items-end shrink-0 gap-0.5 ml-2">
             <span className="font-bebas text-base tracking-wider gold-text leading-tight">{timeStr}</span>
             <div className="flex items-center gap-1.5">
@@ -149,40 +151,77 @@ const App = () => {
             </div>
           </div>
 
-          {/* Mobile menu toggle */}
-          <button
-            className="md:hidden flex flex-col gap-1 p-2 ml-1 shrink-0"
-            onClick={() => setNavOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            {[0,1,2].map((i) => (
-              <div key={i} className="w-5 h-0.5 transition-all duration-200"
-                style={{ background: "#f0c030", opacity: 0.7 }} />
-            ))}
-          </button>
+          {/* Mobile: blink + hamburger grouped */}
+          <div className="md:hidden flex items-center gap-1.5 shrink-0">
+            <span className="blink font-bebas text-sm" style={{ color: "#e8192c" }}>●</span>
+            <button
+              className="flex flex-col gap-1 p-1.5"
+              onClick={() => setNavOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              {[0,1,2].map((i) => (
+                <div key={i} className="w-5 h-0.5" style={{ background: "#f0c030", opacity: 0.7 }} />
+              ))}
+            </button>
+          </div>
 
-          <span className="blink font-bebas text-sm ml-1" style={{ color: "#e8192c" }}>●</span>
+          {/* Desktop blink */}
+          <span className="hidden md:inline blink font-bebas text-sm ml-1" style={{ color: "#e8192c" }}>●</span>
         </div>
 
-        {/* Mobile dropdown — city buttons + clock */}
+        {/* Mobile dropdown — city buttons, GPS, units, clock */}
         {navOpen && (
-          <div className="md:hidden px-4 pb-3 border-t" style={{ borderColor: "rgba(240,192,48,0.1)" }}>
-            {/* Current city pill in mobile dropdown */}
+          <div className="md:hidden px-4 pb-4 border-t" style={{ borderColor: "rgba(240,192,48,0.12)" }}>
+
+            {/* Current city pill */}
             {weather && (
-              <div className="flex items-center gap-2 mt-3 mb-2 px-2 py-1.5 w-fit"
+              <div className="flex items-center gap-2 mt-3 mb-3 px-2.5 py-1.5 w-fit"
                 style={{ border: "1px solid rgba(240,192,48,0.2)", background: "rgba(240,192,48,0.04)" }}>
-                <FlagIcon code={weather.country} size={22} />
+                <FlagIcon code={weather.country} size={20} />
                 <span className="font-bebas text-base tracking-wider" style={{ color: "#f0c030" }}>{weather.name}</span>
-                <span className="font-barlow text-xs font-semibold" style={{ color: "rgba(240,192,48,0.45)" }}>{weather.country}</span>
+                <span className="font-barlow text-xs font-semibold" style={{ color: "rgba(240,192,48,0.4)" }}>{weather.country}</span>
               </div>
             )}
-            <div className="pt-2 mb-3">
+
+            {/* City quick buttons */}
+            <div className="mb-3">
               <TopButtons setQuery={setQuery} onSelect={() => setNavOpen(false)} />
             </div>
-            <div className="flex items-center justify-between">
-              <span className="font-bebas text-base gold-text tracking-wider">{timeStr}</span>
+
+            {/* Bottom row: GPS + units + clock */}
+            <div className="flex items-center justify-between gap-3 pt-2 border-t"
+              style={{ borderColor: "rgba(240,192,48,0.08)" }}>
+
+              {/* GPS button */}
+              <button
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      ({ coords: { latitude, longitude } }) => { setQuery({ lat: latitude, lon: longitude }); setNavOpen(false); },
+                      () => alert("Location access denied.")
+                    );
+                  }
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 font-barlow text-xs uppercase tracking-wide"
+                style={{ border: "1px solid rgba(240,192,48,0.2)", color: "rgba(240,192,48,0.6)" }}
+              >
+                📍 My Location
+              </button>
+
+              {/* Unit toggle */}
+              <div className="flex border overflow-hidden" style={{ borderColor: "rgba(240,192,48,0.2)" }}>
+                {["metric","imperial"].map((u) => (
+                  <button key={u} onClick={() => setUnits(u)}
+                    className="font-bebas text-sm px-3 py-1.5 tracking-widest transition-all duration-150"
+                    style={{ color: units === u ? "#0a0806" : "rgba(240,192,48,0.4)", background: units === u ? "#f0c030" : "#0a0806" }}>
+                    {u === "metric" ? "°C" : "°F"}
+                  </button>
+                ))}
+              </div>
+
+              {/* Clock + 12/24 toggle */}
               <div className="flex items-center gap-2">
-                <span className="font-barlow text-xs" style={{ color: "rgba(240,192,48,0.4)" }}>{dateStr}</span>
+                <span className="font-bebas text-base gold-text tracking-wider">{timeStr}</span>
                 <button
                   onClick={() => setIs24Hour((v) => !v)}
                   className="font-bebas text-xs px-2 py-0.5 tracking-wider"
