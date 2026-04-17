@@ -1,46 +1,38 @@
 import PropTypes from "prop-types";
 
 const UV_LEVELS = [
-  { max: 2,  label: "LOW",       color: "#00ff88", glow: "rgba(0,255,136,0.4)" },
-  { max: 5,  label: "MODERATE",  color: "#ffe600", glow: "rgba(255,230,0,0.4)" },
-  { max: 7,  label: "HIGH",      color: "#ff8c00", glow: "rgba(255,140,0,0.4)" },
-  { max: 10, label: "VERY HIGH", color: "#ff2d2d", glow: "rgba(255,45,45,0.4)" },
-  { max: 99, label: "EXTREME",   color: "#c020ff", glow: "rgba(192,32,255,0.4)" },
+  { max: 2,  label: "LOW",       color: "#00cc44", glow: "rgba(0,204,68,0.4)" },
+  { max: 5,  label: "MODERATE",  color: "#f0c030", glow: "rgba(240,192,48,0.4)" },
+  { max: 7,  label: "HIGH",      color: "#ff8800", glow: "rgba(255,136,0,0.4)" },
+  { max: 10, label: "VERY HIGH", color: "#e8192c", glow: "rgba(232,25,44,0.4)" },
+  { max: 99, label: "EXTREME",   color: "#cc00ff", glow: "rgba(204,0,255,0.4)" },
 ];
 
 const getUVInfo = (v) => UV_LEVELS.find((l) => v <= l.max) ?? UV_LEVELS[UV_LEVELS.length - 1];
 
-const HUDBar = ({ label, value, max = 100, color, unit = "%" }) => {
+const RSBar = ({ label, value, max = 100, color, unit = "%" }) => {
   const pct = Math.min((value / max) * 100, 100);
   const segments = 20;
   return (
     <div>
-      <div className="flex justify-between items-center mb-1">
-        <span className="font-mono-hud text-[9px] text-[#00f5ff]/40 tracking-[0.2em]">{label}</span>
-        <span className="font-orbitron text-xs" style={{ color }}>{value}{unit}</span>
+      <div className="flex justify-between items-center mb-1.5">
+        <span className="font-barlow text-[10px] uppercase tracking-[0.2em]" style={{ color: "rgba(240,192,48,0.4)" }}>{label}</span>
+        <span className="font-bebas text-sm tracking-wider" style={{ color }}>{value}{unit}</span>
       </div>
-      {/* Segmented bar */}
       <div className="flex gap-0.5">
         {Array.from({ length: segments }).map((_, i) => (
-          <div
-            key={i}
-            className="h-2 flex-1 transition-all duration-500"
+          <div key={i} className="h-2 flex-1 transition-all duration-500"
             style={{
-              background: i < Math.round((pct / 100) * segments)
-                ? color
-                : "rgba(0,245,255,0.08)",
-              boxShadow: i < Math.round((pct / 100) * segments)
-                ? `0 0 4px ${color}`
-                : "none",
-            }}
-          />
+              background: i < Math.round((pct / 100) * segments) ? color : "rgba(240,192,48,0.06)",
+              boxShadow:  i < Math.round((pct / 100) * segments) ? `0 0 4px ${color}` : "none",
+            }} />
         ))}
       </div>
     </div>
   );
 };
 
-HUDBar.propTypes = {
+RSBar.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.number.isRequired,
   max: PropTypes.number,
@@ -58,25 +50,24 @@ const UVAndAirQuality = ({ weather: { humidity, weatherId } }) => {
   };
   const uvi = estimateUVI(weatherId);
   const uvInfo = getUVInfo(uvi);
-
-  const humidColor = humidity < 30 ? "#ffe600" : humidity < 60 ? "#00ff88" : humidity < 80 ? "#00f5ff" : "#7b2fff";
+  const humidColor = humidity < 30 ? "#f0c030" : humidity < 60 ? "#00cc44" : humidity < 80 ? "#4da6ff" : "#cc44ff";
 
   return (
-    <div className="hud-panel rounded-none p-4 relative bracket">
-      <div className="absolute top-2 left-2 font-mono-hud text-[8px] text-[#00f5ff]/30 tracking-widest">ENV_ANALYSIS</div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
-        <div className="space-y-1">
-          <HUDBar label="UV INDEX" value={uvi} max={11} color={uvInfo.color} unit="" />
-          <div className="flex justify-end">
-            <span
-              className="font-orbitron text-[9px] px-2 py-0.5 tracking-widest"
-              style={{ color: uvInfo.color, border: `1px solid ${uvInfo.color}`, boxShadow: `0 0 8px ${uvInfo.glow}` }}
-            >
+    <div className="rs-panel rs-bracket relative p-4">
+      <div className="absolute top-2 left-3 font-barlow text-[9px] uppercase tracking-[0.2em]" style={{ color: "rgba(240,192,48,0.25)" }}>
+        ENV Analysis
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+        <div className="space-y-1.5">
+          <RSBar label="UV Index" value={uvi} max={11} color={uvInfo.color} unit="" />
+          <div className="flex justify-end mt-1">
+            <span className="font-bebas text-xs px-2 py-0.5 tracking-widest"
+              style={{ color: uvInfo.color, border: `1px solid ${uvInfo.color}`, boxShadow: `0 0 8px ${uvInfo.glow}` }}>
               {uvInfo.label}
             </span>
           </div>
         </div>
-        <HUDBar label="HUMIDITY" value={humidity} max={100} color={humidColor} unit="%" />
+        <RSBar label="Humidity" value={humidity} max={100} color={humidColor} unit="%" />
       </div>
     </div>
   );
@@ -88,5 +79,4 @@ UVAndAirQuality.propTypes = {
     weatherId: PropTypes.number.isRequired,
   }).isRequired,
 };
-
 export default UVAndAirQuality;

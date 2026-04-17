@@ -12,27 +12,37 @@ function capitalizeFirstLetter(s) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-const NOTIF_TYPES = { info: "#00f5ff", success: "#00ff88", error: "#ff2d78" };
+const NOTIF_COLORS = { info: "#f0c030", success: "#00cc44", error: "#e8192c" };
 
-const HUDNotification = ({ notif }) => {
+const RSNotification = ({ notif }) => {
   if (!notif) return null;
-  const color = NOTIF_TYPES[notif.type] || "#00f5ff";
+  const color = NOTIF_COLORS[notif.type] || "#f0c030";
   return (
     <div
-      className="fixed bottom-4 right-4 z-50 font-mono-hud text-xs px-4 py-2.5 max-w-xs"
+      className="fixed bottom-4 right-4 z-50 font-barlow text-sm px-5 py-3 max-w-sm uppercase tracking-widest"
       style={{
-        background: "#000c1c",
+        background: "#0a0806",
         border: `1px solid ${color}`,
+        borderLeft: `3px solid ${color}`,
         color,
-        boxShadow: `0 0 16px ${color}33`,
-        animation: "flicker 0.3s ease forwards",
+        boxShadow: `0 0 20px ${color}22`,
+        animation: "flicker 0.4s ease forwards",
       }}
     >
-      <span className="opacity-50 mr-2">{">"}</span>
       {notif.msg}
     </div>
   );
 };
+
+/* Rockstar star SVG */
+const RockstarStar = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" className={className}>
+    <polygon
+      points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35"
+      fill="currentColor"
+    />
+  </svg>
+);
 
 const App = () => {
   const [query, setQuery]     = useState({ q: "manila" });
@@ -46,10 +56,9 @@ const App = () => {
   const showNotif = useCallback((type, msg) => {
     clearTimeout(notifTimer.current);
     setNotif({ type, msg });
-    notifTimer.current = setTimeout(() => setNotif(null), 2500);
+    notifTimer.current = setTimeout(() => setNotif(null), 2800);
   }, []);
 
-  // Clock tick for HUD timestamp
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
@@ -57,14 +66,14 @@ const App = () => {
 
   const getWeather = useCallback(async () => {
     const cityName = query.q ? query.q : "current location";
-    showNotif("info", `// SCANNING: ${capitalizeFirstLetter(cityName).toUpperCase()}`);
+    showNotif("info", `Scanning: ${capitalizeFirstLetter(cityName)}`);
     setIsLoading(true);
     try {
       const data = await getFormattedWeatherData({ ...query, units });
-      showNotif("success", `// LOCK ACQUIRED: ${data.name}, ${data.country}`);
+      showNotif("success", `Data loaded — ${data.name}, ${data.country}`);
       setWeather(data);
     } catch (err) {
-      showNotif("error", `// ERROR: ${err.message || "TARGET NOT FOUND"}`);
+      showNotif("error", err.message || "Location not found");
       setWeather(null);
     } finally {
       setIsLoading(false);
@@ -74,44 +83,48 @@ const App = () => {
   useEffect(() => { getWeather(); }, [getWeather]);
 
   const now = new Date();
-  const hudTime = now.toLocaleTimeString("en-US", { hour12: false });
-  const hudDate = now.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
+  const timeStr = now.toLocaleTimeString("en-US", { hour12: false });
+  const dateStr = now.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
 
   return (
-    <div className="min-h-screen bg-[#000c1c] px-2 py-4 md:px-6">
-      {/* Top HUD bar */}
-      <div className="flex items-center justify-between mb-4 px-2 font-mono-hud text-xs text-[#00f5ff]/50">
-        <span>SYS::WEATHER_OS v3.7.1</span>
-        <span className="blink">■</span>
-        <span>{hudDate} — {hudTime}</span>
+    <div className="min-h-screen bg-[#0a0806] px-2 py-4 md:px-6">
+
+      {/* Top system bar */}
+      <div className="flex items-center justify-between mb-4 px-1 font-barlow text-xs tracking-[0.2em] uppercase"
+        style={{ color: "rgba(240,192,48,0.4)" }}>
+        <div className="flex items-center gap-2">
+          <RockstarStar size={12} className="text-[#f0c030] opacity-60" />
+          <span>Rockstar Weather System</span>
+        </div>
+        <span className="blink" style={{ color: "#e8192c" }}>●</span>
+        <span>{dateStr} — {timeStr}</span>
       </div>
 
       <div className="mx-auto max-w-screen-lg">
-        {/* Main panel */}
-        <div className="hud-panel rounded-none md:rounded-sm relative overflow-hidden scan-anim">
-          {/* Top accent line */}
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-[#00f5ff] to-transparent opacity-60" />
 
+        {/* Header brand bar */}
+        <div className="rs-panel mb-3 px-5 py-3 flex items-center justify-between">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#f0c030]/30" />
+          <div className="flex items-center gap-3 px-6">
+            <RockstarStar size={22} className="text-[#f0c030]" style={{ filter: "drop-shadow(0 0 6px rgba(240,192,48,0.6))" }} />
+            <span className="font-bebas text-2xl tracking-[0.3em] gold-text">WEATHER INTEL</span>
+            <RockstarStar size={22} className="text-[#f0c030]" style={{ filter: "drop-shadow(0 0 6px rgba(240,192,48,0.6))" }} />
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#f0c030]/30" />
+        </div>
+
+        {/* Main panel */}
+        <div className="rs-panel relative overflow-hidden">
+          <div className="rs-rule" />
           <div className="p-4 md:p-6">
             <TopButtons setQuery={setQuery} />
             <Input setQuery={setQuery} units={units} setUnits={setUnits} />
 
             {isLoading && (
               <div className="flex flex-col items-center justify-center py-24 space-y-6">
-                {/* Radar loader */}
-                <div className="relative w-24 h-24">
-                  <div className="absolute inset-0 rounded-full border border-[#00f5ff]/20" />
-                  <div className="absolute inset-2 rounded-full border border-[#00f5ff]/15" />
-                  <div className="absolute inset-4 rounded-full border border-[#00f5ff]/10" />
-                  <div className="absolute inset-0 radar-spin origin-center">
-                    <div className="w-1/2 h-px bg-gradient-to-r from-[#00f5ff] to-transparent absolute top-1/2 left-1/2 origin-left" />
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-[#00f5ff] ring-pulse" />
-                  </div>
-                </div>
-                <p className="font-orbitron text-[#00f5ff] text-xs tracking-[0.3em] animate-pulse">
-                  ACQUIRING TARGET...
+                <RockstarStar size={48} className="text-[#f0c030] star-spin opacity-80" />
+                <p className="font-bebas text-[#f0c030]/60 text-xl tracking-[0.4em]">
+                  ACQUIRING DATA...
                 </p>
               </div>
             )}
@@ -122,36 +135,33 @@ const App = () => {
                 <TemperatureAndDetails weather={weather} units={units} />
                 <UVAndAirQuality weather={weather} />
                 <RadarGrid weather={weather} units={units} />
-                <Forecast title="// HOURLY SCAN" data={weather.hourly} />
-                <Forecast title="// DAILY PROJECTION" data={weather.daily} />
+                <Forecast title="HOURLY SCAN" data={weather.hourly} />
+                <Forecast title="DAILY PROJECTION" data={weather.daily} />
               </div>
             )}
 
             {!isLoading && !weather && (
               <div className="flex flex-col items-center justify-center py-24 space-y-4">
-                <div className="relative w-20 h-20">
-                  <div className="absolute inset-0 rounded-full border border-[#00f5ff]/20 ring-pulse" />
-                  <div className="absolute inset-3 rounded-full border border-[#00f5ff]/10" />
-                  <div className="absolute inset-0 flex items-center justify-center text-[#00f5ff]/30 text-3xl">?</div>
-                </div>
-                <p className="font-orbitron text-[#00f5ff]/40 text-xs tracking-[0.3em]">AWAITING COORDINATES</p>
+                <RockstarStar size={40} className="text-[#f0c030]/20 rs-pulse" />
+                <p className="font-bebas text-[#f0c030]/30 text-lg tracking-[0.4em]">ENTER LOCATION</p>
               </div>
             )}
           </div>
-
-          {/* Bottom accent line */}
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-[#00f5ff] to-transparent opacity-60" />
+          <div className="rs-rule" />
         </div>
 
-        {/* Bottom HUD bar */}
-        <div className="flex items-center justify-between mt-2 px-2 font-mono-hud text-xs text-[#00f5ff]/30">
-          <span>LAT/LON: {weather ? `${weather.lat?.toFixed(2)}° / ${weather.lon?.toFixed(2)}°` : "-- / --"}</span>
-          <span>STATUS: {isLoading ? "SCANNING" : weather ? "NOMINAL" : "STANDBY"}</span>
-          <span>PWR: ████████░░ 82%</span>
+        {/* Footer bar */}
+        <div className="flex items-center justify-between mt-2 px-1 font-barlow text-xs tracking-widest uppercase"
+          style={{ color: "rgba(240,192,48,0.25)" }}>
+          <span>Coords: {weather ? `${weather.lat?.toFixed(2)}° / ${weather.lon?.toFixed(2)}°` : "-- / --"}</span>
+          <span style={{ color: isLoading ? "#e8192c" : weather ? "rgba(240,192,48,0.4)" : "rgba(240,192,48,0.2)" }}>
+            {isLoading ? "● Scanning" : weather ? "● Online" : "● Standby"}
+          </span>
+          <span>R★ Weather v3.7</span>
         </div>
       </div>
 
-      <HUDNotification notif={notif} />
+      <RSNotification notif={notif} />
     </div>
   );
 };
