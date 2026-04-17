@@ -1,38 +1,35 @@
 import PropTypes from "prop-types";
 
-// TopButtons component that renders a set of buttons for city queries
-const TopButtons = ({ setQuery }) => {
-  // List of cities to display as buttons
-  const cities = [
-    { id: 1, name: "Boston" },
-    { id: 2, name: "Los Angeles" },
-    { id: 3, name: "Tokyo" },
-    { id: 4, name: "Paris" },
-    { id: 5, name: "Winnipeg" },
-  ];
+const CITIES = [
+  { id: 1, name: "Manila",   flag: "🇵🇭", code: "MNL" },
+  { id: 2, name: "Tokyo",    flag: "🇯🇵", code: "TYO" },
+  { id: 3, name: "New York", flag: "🇺🇸", code: "NYC" },
+  { id: 4, name: "London",   flag: "🇬🇧", code: "LDN" },
+  { id: 5, name: "Dubai",    flag: "🇦🇪", code: "DXB" },
+];
 
-  return (
-    <div className="flex flex-wrap justify-center gap-4 my-6">
-      {cities.map((city) => (
-        <button
-          key={city.id} // Unique key for React's reconciliation
-          className="text-lg font-medium bg-gray-800 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 px-6 py-3 rounded-lg transition transform hover:scale-105 ease-in-out duration-300 shadow-md hover:shadow-lg"
-          style={{
-            minWidth: "120px", // Ensure minimum width for uniform buttons
-          }}
-          onClick={() => setQuery({ q: city.name })} // Set query on button click
-          aria-label={`Search weather in ${city.name}`} // Accessibility enhancement
-        >
-          {city.name} {/* Button label displaying the city name */}
-        </button>
-      ))}
-    </div>
-  );
-};
+const TopButtons = ({ setQuery }) => (
+  <div className="flex flex-wrap justify-center gap-2 mb-5">
+    {CITIES.map((city) => (
+      <button
+        key={city.id}
+        onClick={() => setQuery({ q: city.name })}
+        aria-label={`Show weather for ${city.name}`}
+        className="group relative flex items-center gap-2 px-3 py-1.5 text-xs font-mono-hud
+          bg-[#000c1c] border border-[#00f5ff]/20 text-[#00f5ff]/60
+          hover:border-[#00f5ff]/70 hover:text-[#00f5ff] hover:bg-[#00f5ff]/5
+          transition-all duration-200 active:scale-95
+          focus:outline-none focus:border-[#00f5ff]/60"
+      >
+        <span className="text-base leading-none">{city.flag}</span>
+        <span className="tracking-widest">{city.code}</span>
+        {/* corner accent */}
+        <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-[#00f5ff]/40 group-hover:border-[#00f5ff]" />
+        <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-[#00f5ff]/40 group-hover:border-[#00f5ff]" />
+      </button>
+    ))}
+  </div>
+);
 
-// PropTypes to validate the component's props
-TopButtons.propTypes = {
-  setQuery: PropTypes.func.isRequired, // setQuery must be a function
-};
-
+TopButtons.propTypes = { setQuery: PropTypes.func.isRequired };
 export default TopButtons;

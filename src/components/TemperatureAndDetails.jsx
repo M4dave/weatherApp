@@ -1,93 +1,85 @@
-import { FaThermometerEmpty } from "react-icons/fa"; // Importing temperature icon
-import { BiSolidDropletHalf } from "react-icons/bi"; // Importing humidity icon
-import { FiWind } from "react-icons/fi"; // Importing wind speed icon
-import { GiSunrise, GiSunset } from "react-icons/gi"; // Importing sunrise and sunset icons
-import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md"; // Importing arrow icons for high/low temperatures
+import { GiSunrise, GiSunset } from "react-icons/gi";
+import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
+import PropTypes from "prop-types";
 
-// Functional component to display weather information
 const TemperatureAndDetails = ({
-  weather: {
-    details, // Weather details description
-    icon, // Weather icon URL
-    temp, // Current temperature
-    temp_min, // Minimum temperature
-    temp_max, // Maximum temperature
-    sunrise, // Sunrise time
-    sunset, // Sunset time
-    speed, // Wind speed
-    humidity, // Humidity percentage
-    feels_like, // Real feel temperature
-    units, // Measurement units (metric/imperial)
-  },
+  weather: { details, description, icon, temp, temp_min, temp_max, sunrise, sunset, speed, windDir, humidity, feels_like, visibility, pressure, cloudCover },
+  units,
 }) => {
-  // Array for vertical weather details
-  const verticalDetails = [
-    {
-      id: 1,
-      Icon: FaThermometerEmpty, // Icon for real feel
-      title: "Real Feel", // Title for real feel
-      value: `${feels_like.toFixed()}\u00B0`, // Formatted real feel value
-    },
-    {
-      id: 2,
-      Icon: BiSolidDropletHalf, // Icon for humidity
-      title: "Humidity", // Title for humidity
-      value: `${humidity.toFixed()}%`, // Formatted humidity value
-    },
-    {
-      id: 3,
-      Icon: FiWind, // Icon for wind speed
-      title: "Wind", // Title for wind
-      value: `${speed.toFixed()} ${units === "metric" ? `km/h` : `m/s`} `, // Formatted wind speed
-    },
-  ];
-
-  // Array for horizontal weather details
-  const horizonDetails = [
-    { id: 1, Icon: GiSunrise, title: "Sunrise", value: sunrise }, // Sunrise details
-    { id: 2, Icon: GiSunset, title: "Sunset", value: sunset }, // Sunset details
-    {
-      id: 3,
-      Icon: MdKeyboardArrowUp, // Icon for maximum temperature
-      title: "High", // Title for high temperature
-      value: `${temp_max.toFixed()}\u00B0`, // Formatted maximum temperature
-    },
-    {
-      id: 4,
-      Icon: MdKeyboardArrowDown, // Icon for minimum temperature
-      title: "Low", // Title for low temperature
-      value: `${temp_min.toFixed()}\u00B0`, // Formatted minimum temperature
-    },
-  ];
+  const windUnit = units === "metric" ? "m/s" : "mph";
+  const windLabel = windDir ? `${speed.toFixed(1)} ${windUnit} ${windDir}` : `${speed.toFixed(1)} ${windUnit}`;
 
   return (
-    <div className="px-4 md:px-0"> {/* Main container with padding */}
-      <div className="flex items-center justify-center py-6 text-xl text-cyan-300">
-        <p>{details}</p> {/* Displaying weather details */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+      {/* LEFT: Icon + condition */}
+      <div className="hud-panel rounded-none p-4 flex flex-col items-center justify-center bracket relative">
+        <div className="absolute top-2 left-2 font-mono-hud text-[8px] text-[#00f5ff]/30 tracking-widest">COND</div>
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full border border-[#00f5ff]/20 ring-pulse scale-125" />
+          <img src={icon} alt={details} className="w-24 h-24 relative z-10 drop-shadow-[0_0_12px_rgba(0,245,255,0.5)]" />
+        </div>
+        <p className="font-orbitron text-[#00f5ff]/80 text-xs tracking-widest uppercase mt-3 text-center">
+          {description || details}
+        </p>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-between py-3"> {/* Weather info layout */}
-        <img src={icon} alt="weather icon" className="w-20 md:w-32" /> {/* Weather icon */}
-        <p className="text-5xl">{`${temp.toFixed()}\u00B0`}</p> {/* Current temperature */}
-        <div className="flex flex-col space-y-3 items-start mt-4 md:mt-0"> {/* Vertical details layout */}
-          {verticalDetails.map(({ id, Icon, title, value }) => ( // Mapping vertical details
-            <div
-              key={id}
-              className="flex font-light text-sm items-center justify-start"
-            >
-              <Icon size={18} className="mr-1" /> {/* Displaying icon */}
-              {`${title}:`} {/* Title label */}
-              <span className="font-medium ml-1">{value}</span> {/* Value display */}
-            </div>
-          ))}
+
+      {/* CENTER: Big temperature */}
+      <div className="hud-panel rounded-none p-4 flex flex-col items-center justify-center relative bracket">
+        <div className="absolute top-2 left-2 font-mono-hud text-[8px] text-[#00f5ff]/30 tracking-widest">TEMP</div>
+        <div className="flex items-start leading-none mb-2">
+          <span className="font-orbitron font-black text-7xl md:text-8xl neon-text">
+            {temp.toFixed()}
+          </span>
+          <span className="font-orbitron text-3xl text-[#00f5ff]/60 mt-2">°</span>
+        </div>
+        <div className="flex gap-4 text-xs font-mono-hud">
+          <span className="flex items-center gap-1 text-red-400/80">
+            <MdKeyboardArrowUp size={14} />{temp_max.toFixed()}°
+          </span>
+          <span className="text-[#00f5ff]/20">|</span>
+          <span className="flex items-center gap-1 text-blue-400/80">
+            <MdKeyboardArrowDown size={14} />{temp_min.toFixed()}°
+          </span>
+        </div>
+        <p className="font-mono-hud text-[#00f5ff]/40 text-xs mt-2 tracking-wider">
+          FEELS {feels_like.toFixed()}°
+        </p>
+      </div>
+
+      {/* RIGHT: Sun times */}
+      <div className="hud-panel rounded-none p-4 flex flex-col justify-center gap-3 relative bracket">
+        <div className="absolute top-2 left-2 font-mono-hud text-[8px] text-[#00f5ff]/30 tracking-widest">SOL</div>
+        <div className="flex items-center gap-3">
+          <GiSunrise size={24} className="text-yellow-400/70 shrink-0" />
+          <div>
+            <p className="text-[#00f5ff]/30 text-[9px] tracking-widest font-mono-hud">SUNRISE</p>
+            <p className="font-orbitron text-yellow-400/80 text-sm">{sunrise}</p>
+          </div>
+        </div>
+        <div className="h-px bg-[#00f5ff]/10" />
+        <div className="flex items-center gap-3">
+          <GiSunset size={24} className="text-orange-400/70 shrink-0" />
+          <div>
+            <p className="text-[#00f5ff]/30 text-[9px] tracking-widest font-mono-hud">SUNSET</p>
+            <p className="font-orbitron text-orange-400/80 text-sm">{sunset}</p>
+          </div>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center text-sm py-3 space-y-3 md:space-y-0 md:space-x-10"> {/* Horizontal details layout */}
-        {horizonDetails.map(({ id, Icon, title, value }) => ( // Mapping horizontal details
-          <div key={id} className="flex flex-row items-center">
-            <Icon size={30} className="mr-1" /> {/* Displaying icon */}
-            <p className="font-light">
-              {`${title}:`} <span className="font-medium ml-1">{value}</span> {/* Title and value display */}
-            </p>
+
+      {/* BOTTOM ROW: inline stat readouts */}
+      <div className="md:col-span-3 hud-panel rounded-none p-3 flex flex-wrap justify-around gap-y-2 relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00f5ff]/30 to-transparent" />
+        {[
+          { label: "HUMIDITY",   value: `${humidity}%` },
+          { label: "WIND",       value: windLabel },
+          { label: "PRESSURE",   value: pressure ? `${pressure} hPa` : "N/A" },
+          { label: "VISIBILITY", value: visibility ? `${visibility} km` : "N/A" },
+          { label: "CLOUD COV.", value: cloudCover !== null ? `${cloudCover}%` : "N/A" },
+        ].map(({ label, value }) => (
+          <div key={label} className="flex flex-col items-center px-3">
+            <span className="font-mono-hud text-[9px] text-[#00f5ff]/30 tracking-[0.2em]">{label}</span>
+            <span className="font-orbitron text-[#00f5ff] text-sm font-bold mt-0.5">{value}</span>
           </div>
         ))}
       </div>
@@ -95,4 +87,25 @@ const TemperatureAndDetails = ({
   );
 };
 
-export default TemperatureAndDetails; // Exporting the component for use in other parts of the application
+TemperatureAndDetails.propTypes = {
+  weather: PropTypes.shape({
+    details: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    icon: PropTypes.string.isRequired,
+    temp: PropTypes.number.isRequired,
+    temp_min: PropTypes.number.isRequired,
+    temp_max: PropTypes.number.isRequired,
+    sunrise: PropTypes.string.isRequired,
+    sunset: PropTypes.string.isRequired,
+    speed: PropTypes.number.isRequired,
+    windDir: PropTypes.string,
+    humidity: PropTypes.number.isRequired,
+    feels_like: PropTypes.number.isRequired,
+    visibility: PropTypes.string,
+    pressure: PropTypes.number,
+    cloudCover: PropTypes.number,
+  }).isRequired,
+  units: PropTypes.string.isRequired,
+};
+
+export default TemperatureAndDetails;

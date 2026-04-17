@@ -1,3 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Share+Tech+Mono&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --neon: #00f5ff;
+  --neon2: #7b2fff;
+  --neon3: #ff2d78;
+  --neon-dim: rgba(0, 245, 255, 0.15);
+  --panel: rgba(0, 12, 28, 0.75);
+  --panel-border: rgba(0, 245, 255, 0.2);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: #000c1c;
+  min-height: 100vh;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 245, 255, 0.015) 2px,
+    rgba(0, 245, 255, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.font-orbitron { font-family: 'Orbitron', sans-serif; }
+.font-mono-hud { font-family: 'Share Tech Mono', monospace; }
+
+/* Neon glow effects */
+.neon-text {
+  color: var(--neon);
+  text-shadow: 0 0 8px var(--neon), 0 0 20px rgba(0,245,255,0.4);
+}
+.neon-border {
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 12px rgba(0,245,255,0.08), inset 0 0 12px rgba(0,245,255,0.04);
+}
+.neon-border-bright {
+  border: 1px solid rgba(0,245,255,0.5);
+  box-shadow: 0 0 20px rgba(0,245,255,0.2), inset 0 0 20px rgba(0,245,255,0.05);
+}
+
+/* HUD panel */
+.hud-panel {
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 0 16px rgba(0,245,255,0.06), inset 0 0 16px rgba(0,245,255,0.03);
+  position: relative;
+}
+.hud-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0,245,255,0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Corner brackets */
+.bracket::before,
+.bracket::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--neon);
+  border-style: solid;
+  opacity: 0.7;
+}
+.bracket::before { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.bracket::after  { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
+/* Animated scan line */
+@keyframes scanline {
+  0%   { transform: translateY(-100%); opacity: 0.6; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+.scan-anim::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon), transparent);
+  animation: scanline 3s linear infinite;
+  pointer-events: none;
+}
+
+/* Pulsing ring */
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+.ring-pulse { animation: ring-pulse 3s ease-in-out infinite; }
+
+/* Blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+.blink { animation: blink 1.5s step-end infinite; }
+
+/* Data flicker on load */
+@keyframes flicker {
+  0%   { opacity: 0; }
+  10%  { opacity: 0.9; }
+  12%  { opacity: 0.2; }
+  15%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+.flicker { animation: flicker 0.4s ease forwards; }
+
+/* Glitch on hover */
+@keyframes glitch {
+  0%   { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 0); }
+  25%  { clip-path: inset(12% 0 73% 0); transform: translate(2px, 0); }
+  50%  { clip-path: inset(70% 0 14% 0); transform: translate(0, 0); }
+  75%  { clip-path: inset(4% 0 83% 0);  transform: translate(-1px, 0); }
+  100% { clip-path: inset(60% 0 25% 0); transform: translate(1px, 0); }
+}
+
+/* Spin radar */
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.radar-spin { animation: radar-spin 6s linear infinite; }
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
