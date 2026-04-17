@@ -34,12 +34,12 @@ const Forecast = ({ title, data }) => {
               {d.title}
             </p>
 
-            {/* Weather icon — use color icons with neon glow, no desaturation */}
+            {/* Weather icon — invert dark icons to white then tint with neon glow */}
             <img
               src={d.icon}
               alt={d.description || "weather"}
               className="w-10 h-10"
-              style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.45)) brightness(1.1)" }}
+              style={{ filter: "invert(1) sepia(1) saturate(3) hue-rotate(170deg) brightness(1.4) drop-shadow(0 0 5px rgba(0,245,255,0.6))" }}
             />
 
             {/* Temperature */}

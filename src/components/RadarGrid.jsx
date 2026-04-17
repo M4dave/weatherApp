@@ -64,15 +64,17 @@ WindCompass.propTypes = {
 
 const MiniGauge = ({ label, value, displayValue, max, color, unit }) => {
   const pct = Math.min(value / max, 1);
-  const r = 30, cx = 38, cy = 38;
+  const r = 32, cx = 42, cy = 42;
   const circ = 2 * Math.PI * r;
   const strokeLen = circ * pct;
-  // Show whole number in ring, unit below
   const shown = displayValue ?? Math.round(value);
+  // Scale font: 4+ digits → 10px, 3 digits → 12px, 1-2 digits → 14px
+  const digits = String(shown).length;
+  const fontSize = digits >= 4 ? 10 : digits === 3 ? 12 : 14;
 
   return (
     <div className="flex flex-col items-center">
-      <svg width="76" height="76" viewBox="0 0 76 76">
+      <svg width="84" height="84" viewBox="0 0 84 84">
         {/* Track */}
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(0,245,255,0.07)" strokeWidth="5" />
         {/* Progress */}
@@ -80,10 +82,10 @@ const MiniGauge = ({ label, value, displayValue, max, color, unit }) => {
           strokeWidth="5" strokeDasharray={`${strokeLen} ${circ}`}
           strokeLinecap="butt"
           transform={`rotate(-90 ${cx} ${cy})`}
-          style={{ filter: `drop-shadow(0 0 5px ${color})`, transition: "stroke-dasharray 0.9s ease" }} />
+          style={{ filter: `drop-shadow(0 0 6px ${color})`, transition: "stroke-dasharray 0.9s ease" }} />
         {/* Value */}
-        <text x={cx} y={cx - 1} textAnchor="middle" dominantBaseline="middle"
-          fill={color} fontSize="13" fontFamily="'Orbitron', sans-serif" fontWeight="bold">
+        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle"
+          fill={color} fontSize={fontSize} fontFamily="'Orbitron', sans-serif" fontWeight="bold">
           {shown}
         </text>
       </svg>
