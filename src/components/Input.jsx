@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 const GEO_URL = "https://api.openweathermap.org/geo/1.0/direct";
 const API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
 
-const Input = ({ setQuery, units, setUnits }) => {
+const Input = ({ setQuery, units, setUnits, compact = false }) => {
   const [city, setCity]           = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -79,7 +79,7 @@ const Input = ({ setQuery, units, setUnits }) => {
   const showDropdown = isFocused && (suggestions.length > 0 || isSearching) && city.length >= 2;
 
   return (
-    <div className="flex justify-center mb-5 px-1">
+    <div className={`flex justify-center ${compact ? "" : "mb-5"} px-1`}>
       <div className="flex items-center w-full max-w-2xl gap-2">
 
         <div ref={wrapperRef} className="relative flex-1">
@@ -96,7 +96,7 @@ const Input = ({ setQuery, units, setUnits }) => {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               type="text"
-              placeholder="ENTER CITY NAME..."
+              placeholder="Enter city name..."
               autoComplete="off"
               className="flex-1 bg-transparent outline-none text-sm font-barlow tracking-widest uppercase"
               style={{ color: "#f0c030", caretColor: "#f0c030" }}
@@ -204,5 +204,6 @@ Input.propTypes = {
   setQuery: PropTypes.func.isRequired,
   units: PropTypes.string.isRequired,
   setUnits: PropTypes.func.isRequired,
+  compact: PropTypes.bool,
 };
 export default Input;

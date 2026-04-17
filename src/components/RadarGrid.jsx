@@ -11,9 +11,10 @@ const WindCompass = ({ deg, speed, unit }) => {
   const tailY  = cy - r * 0.25 * Math.sin(rad);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center gap-1">
+      <p className="font-barlow text-xs uppercase tracking-wider font-semibold" style={{ color: "rgba(240,192,48,0.55)" }}>Wind Direction</p>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={cx} cy={cy} r={r}        fill="none" stroke="rgba(240,192,48,0.12)" strokeWidth="1" />
+        <circle cx={cx} cy={cy} r={r}        fill="none" stroke="rgba(240,192,48,0.14)" strokeWidth="1" />
         <circle cx={cx} cy={cy} r={r * 0.65} fill="none" stroke="rgba(240,192,48,0.07)" strokeWidth="0.5" strokeDasharray="2 3" />
         <circle cx={cx} cy={cy} r={r * 0.3}  fill="none" stroke="rgba(240,192,48,0.07)" strokeWidth="0.5" />
         {[0,45,90,135,180,225,270,315].map((a) => {
@@ -21,24 +22,23 @@ const WindCompass = ({ deg, speed, unit }) => {
           const isCardinal = a % 90 === 0;
           return <line key={a}
             x1={cx + (r - (isCardinal ? 7 : 4)) * Math.cos(ra)} y1={cy + (r - (isCardinal ? 7 : 4)) * Math.sin(ra)}
-            x2={cx + (r + 2) * Math.cos(ra)}                    y2={cy + (r + 2) * Math.sin(ra)}
-            stroke={isCardinal ? "rgba(240,192,48,0.5)" : "rgba(240,192,48,0.2)"} strokeWidth={isCardinal ? "1" : "0.5"} />;
+            x2={cx + (r + 2) * Math.cos(ra)} y2={cy + (r + 2) * Math.sin(ra)}
+            stroke={isCardinal ? "rgba(240,192,48,0.55)" : "rgba(240,192,48,0.2)"} strokeWidth={isCardinal ? "1" : "0.5"} />;
         })}
         {[["N",0],["E",90],["S",180],["W",270]].map(([l, a]) => {
           const ra = (a - 90) * (Math.PI / 180);
           return <text key={l} x={cx + (r + 10) * Math.cos(ra)} y={cy + (r + 10) * Math.sin(ra)}
             textAnchor="middle" dominantBaseline="middle"
-            fill="rgba(240,192,48,0.45)" fontSize="7" fontFamily="'Barlow Condensed', sans-serif">{l}</text>;
+            fill="rgba(240,192,48,0.6)" fontSize="8" fontFamily="'Barlow Condensed', sans-serif" fontWeight="600">{l}</text>;
         })}
         <line x1={tailX} y1={tailY} x2={arrowX} y2={arrowY}
           stroke="#f0c030" strokeWidth="2.5" style={{ filter: "drop-shadow(0 0 4px rgba(240,192,48,0.7))" }} />
         <circle cx={arrowX} cy={arrowY} r="4" fill="#f0c030" style={{ filter: "drop-shadow(0 0 6px rgba(240,192,48,0.8))" }} />
         <circle cx={tailX} cy={tailY} r="2" fill="rgba(240,192,48,0.3)" />
-        <circle cx={cx} cy={cy} r="2.5" fill="none" stroke="rgba(240,192,48,0.4)" strokeWidth="0.5" />
         <circle cx={cx} cy={cy} r="1" fill="rgba(240,192,48,0.6)" />
       </svg>
-      <p className="font-bebas text-base tracking-wider" style={{ color: "#f0c030" }}>{label}</p>
-      <p className="font-barlow text-xs uppercase" style={{ color: "rgba(240,192,48,0.5)" }}>{speed?.toFixed(1)} {unit}</p>
+      <p className="font-bebas text-xl tracking-wider" style={{ color: "#f0c030" }}>{label}</p>
+      <p className="font-barlow text-sm font-semibold" style={{ color: "rgba(240,192,48,0.65)" }}>{speed?.toFixed(1)} {unit}</p>
     </div>
   );
 };
@@ -55,9 +55,9 @@ const MiniGauge = ({ label, value, displayValue, max, color, unit }) => {
   const fontSize = digits >= 4 ? 10 : digits === 3 ? 12 : 14;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center gap-1">
       <svg width="84" height="84" viewBox="0 0 84 84">
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(240,192,48,0.07)" strokeWidth="5" />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(240,192,48,0.08)" strokeWidth="5" />
         <circle cx={cx} cy={cy} r={r} fill="none" stroke={color}
           strokeWidth="5" strokeDasharray={`${strokeLen} ${circ}`} strokeLinecap="butt"
           transform={`rotate(-90 ${cx} ${cy})`}
@@ -67,8 +67,8 @@ const MiniGauge = ({ label, value, displayValue, max, color, unit }) => {
           {shown}
         </text>
       </svg>
-      <p className="font-barlow text-[9px] uppercase tracking-widest mt-0.5" style={{ color: "rgba(240,192,48,0.4)" }}>{label}</p>
-      {unit && <p className="font-bebas text-[10px] tracking-wide" style={{ color }}>{unit}</p>}
+      <p className="font-barlow text-xs uppercase tracking-wider font-semibold" style={{ color: "rgba(240,192,48,0.6)" }}>{label}</p>
+      {unit && <p className="font-barlow text-sm font-semibold" style={{ color }}>{unit}</p>}
     </div>
   );
 };
@@ -86,15 +86,15 @@ const RadarGrid = ({ weather: { humidity, pressure, cloudCover, speed, windDir: 
   const pressurePct = pressure ? Math.round(((pressure - 950) / 100) * 100) : 0;
 
   return (
-    <div className="rs-panel relative p-4">
-      <div className="absolute top-2 left-3 font-barlow text-[9px] uppercase tracking-[0.2em]" style={{ color: "rgba(240,192,48,0.25)" }}>
+    <div className="rs-panel relative p-5">
+      <p className="font-barlow text-sm uppercase tracking-wider font-semibold mb-4" style={{ color: "rgba(240,192,48,0.55)" }}>
         Sensor Array
-      </div>
+      </p>
       <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(232,25,44,0.4), transparent)" }} />
-      <div className="flex flex-wrap justify-around items-center gap-4 mt-4">
+      <div className="flex flex-wrap justify-around items-start gap-6">
         <WindCompass deg={windDeg} speed={speed} unit={windUnit} />
         <MiniGauge label="Humidity"  value={humidity}        max={100} color="#f0c030" unit={`${humidity}%`} />
-        <MiniGauge label="Cloud Cov" value={cloudCover ?? 0} max={100} color="#e8192c" unit={`${cloudCover ?? 0}%`} />
+        <MiniGauge label="Cloud Cover" value={cloudCover ?? 0} max={100} color="#e8192c" unit={`${cloudCover ?? 0}%`} />
         <MiniGauge label="Pressure"  value={pressurePct} displayValue={pressure ?? 0} max={100} color="#cc8800"
           unit={pressure ? `${pressure} hPa` : "N/A"} />
       </div>
