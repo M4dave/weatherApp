@@ -73,30 +73,59 @@ const formatCurrent = (data) => {
 };
 
 const formatForecastWeather = (secs, offset, data) => {
+  // HOURLY — next 8 slots (24 hrs) after current time, pop defaults to 0
   const hourly = data
     .filter((f) => f.dt > secs)
+    .slice(0, 8)
     .map((f) => ({
       temp: f.main.temp,
       title: formatToLocalTime(f.dt, offset, "hh:mm a"),
       icon: iconUrlFromCode(f.weather[0].icon),
       date: f.dt_txt,
       description: f.weather[0].description,
-      pop: f.pop,
-    }))
-    .slice(0, 5);
-
-  const daily = data
-    .filter((f) => f.dt_txt.slice(-8) === "00:00:00")
-    .map((f) => ({
-      temp: f.main.temp,
-      temp_min: f.main.temp_min,
-      temp_max: f.main.temp_max,
-      title: formatToLocalTime(f.dt, offset, "ccc"),
-      icon: iconUrlFromCode(f.weather[0].icon),
-      date: f.dt_txt,
-      description: f.weather[0].description,
-      pop: f.pop,
+      pop: f.pop ?? 0,
     }));
+
+  // DAILY — group all slots by LOCAL date (using timezone offset), then
+  // pick the representative slot closest to noon local time per day.
+  // This fixes the midnight-UTC filter which skips days in offset timezones.
+  const byDay = {};
+  data.forEach((f) => {
+    const localDate = DateTime.fromSeconds(f.dt + offset, { zone: "utc" })
+      .toFormat("yyyy-MM-dd");
+    if (!byDay[localDate]) byDay[localDate] = [];
+    byDay[localDate].push(f);
+  });
+
+  const daily = Object.entries(byDay)
+    // Skip today — it's already shown in current weather
+    .filter(([date]) => {
+      const todayLocal = DateTime.fromSeconds(secs + offset, { zone: "utc" }).toFormat("yyyy-MM-dd");
+      return date > todayLocal;
+    })
+    .slice(0, 5)
+    .map(([date, slots]) => {
+      // Pick slot nearest to 12:00 local time
+      const noon = DateTime.fromISO(`${date}T12:00:00`, { zone: "utc" }).toSeconds() - offset;
+      const rep = slots.reduce((best, f) =>
+        Math.abs(f.dt - noon) < Math.abs(best.dt - noon) ? f : best
+      );
+      // Aggregate hi/lo across all slots for the day
+      const hiTemp = Math.max(...slots.map((f) => f.main.temp_max));
+      const loTemp = Math.min(...slots.map((f) => f.main.temp_min));
+      const maxPop = Math.max(...slots.map((f) => f.pop ?? 0));
+
+      return {
+        temp: rep.main.temp,
+        temp_min: loTemp,
+        temp_max: hiTemp,
+        title: formatToLocalTime(rep.dt, offset, "ccc, dd LLL"),
+        icon: iconUrlFromCode(rep.weather[0].icon),
+        date,
+        description: rep.weather[0].description,
+        pop: maxPop,
+      };
+    });
 
   return { hourly, daily };
 };

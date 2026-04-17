@@ -41,9 +41,14 @@ const Forecast = ({ title, data }) => {
                 {d.temp_max.toFixed()}° / {d.temp_min.toFixed()}°
               </p>
             )}
-            {d.pop > 0 && (
+            {(d.pop ?? 0) > 0 && (
               <p className="font-mono-hud text-blue-400/70 text-[9px] mt-0.5">
                 💧 {Math.round(d.pop * 100)}%
+              </p>
+            )}
+            {d.description && (
+              <p className="font-mono-hud text-[#00f5ff]/20 text-[8px] mt-0.5 text-center capitalize leading-tight whitespace-nowrap overflow-hidden max-w-[70px] text-ellipsis">
+                {d.description}
               </p>
             )}
           </div>
