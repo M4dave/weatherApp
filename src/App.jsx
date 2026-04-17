@@ -103,7 +103,7 @@ const App = () => {
         {/* Main nav row */}
         <div className="flex items-center gap-2 px-3 py-2">
 
-          {/* Brand — always visible, tighter on mobile */}
+          {/* Brand — always visible */}
           <div className="flex items-center gap-1 shrink-0">
             <Star size={12} style={{ color: "#f0c030", filter: "drop-shadow(0 0 4px rgba(240,192,48,0.6))" }} />
             <span className="font-bebas text-base sm:text-xl tracking-wider sm:tracking-[0.2em] gold-text whitespace-nowrap">
@@ -112,15 +112,16 @@ const App = () => {
             <Star size={12} style={{ color: "#f0c030", filter: "drop-shadow(0 0 4px rgba(240,192,48,0.6))" }} />
           </div>
 
-          {/* City buttons — hidden on small screens, shown md+ */}
+          {/* City buttons — desktop only */}
           <div className="hidden md:flex items-center gap-2 ml-2">
             <div className="h-4 w-px" style={{ background: "rgba(240,192,48,0.2)" }} />
             <TopButtons setQuery={setQuery} />
           </div>
 
-          <div className="flex-1 min-w-0" />
+          {/* Spacer — only on desktop where there's room */}
+          <div className="hidden md:block flex-1 min-w-0" />
 
-          {/* Current city indicator — only sm+ since mobile uses dropdown */}
+          {/* Current city indicator — sm+ only */}
           {weather && (
             <div className="hidden sm:flex items-center gap-1.5 shrink-0 px-2.5 py-1 mr-1"
               style={{ border: "1px solid rgba(240,192,48,0.2)", background: "rgba(240,192,48,0.04)" }}>
@@ -130,8 +131,8 @@ const App = () => {
             </div>
           )}
 
-          {/* Search — on mobile show only the text input, hide GPS + units (they're in dropdown) */}
-          <div className="shrink-0 min-w-0" style={{ width: "clamp(110px, 35vw, 240px)" }}>
+          {/* Search — flex-1 on mobile so it fills remaining space, fixed on desktop */}
+          <div className="flex-1 md:flex-none md:w-64 min-w-0">
             <Input setQuery={setQuery} units={units} setUnits={setUnits} compact mobileMinimal />
           </div>
 
@@ -151,18 +152,18 @@ const App = () => {
             </div>
           </div>
 
-          {/* Mobile: blink + hamburger grouped */}
-          <div className="md:hidden flex items-center gap-1.5 shrink-0">
-            <span className="blink font-bebas text-sm" style={{ color: "#e8192c" }}>●</span>
+          {/* Mobile: hamburger + blink — fixed size, always fits */}
+          <div className="md:hidden flex items-center gap-1 shrink-0 ml-1">
             <button
-              className="flex flex-col gap-1 p-1.5"
+              className="flex flex-col justify-center gap-1 p-2"
               onClick={() => setNavOpen((v) => !v)}
               aria-label="Toggle menu"
             >
               {[0,1,2].map((i) => (
-                <div key={i} className="w-5 h-0.5" style={{ background: "#f0c030", opacity: 0.7 }} />
+                <div key={i} className="w-4 h-0.5" style={{ background: "#f0c030", opacity: 0.7 }} />
               ))}
             </button>
+            <span className="blink font-bebas text-xs" style={{ color: "#e8192c" }}>●</span>
           </div>
 
           {/* Desktop blink */}

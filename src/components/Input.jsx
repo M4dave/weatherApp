@@ -79,8 +79,8 @@ const Input = ({ setQuery, units, setUnits, compact = false, mobileMinimal = fal
   const showDropdown = isFocused && (suggestions.length > 0 || isSearching) && city.length >= 2;
 
   return (
-    <div className={`flex justify-center ${compact ? "" : "mb-5"} px-1`}>
-      <div className="flex items-center w-full max-w-2xl gap-2">
+    <div className={`flex justify-center ${compact ? "" : "mb-5"} px-1 min-w-0 w-full`}>
+      <div className={`flex items-center gap-2 ${compact ? "w-full" : "w-full max-w-2xl"}`}>
 
         <div ref={wrapperRef} className="relative flex-1">
           {/* Input bar */}
@@ -96,7 +96,7 @@ const Input = ({ setQuery, units, setUnits, compact = false, mobileMinimal = fal
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               type="text"
-              placeholder="Enter city name..."
+              placeholder="Search city..."
               autoComplete="off"
               className="flex-1 bg-transparent outline-none text-sm font-barlow tracking-widest uppercase"
               style={{ color: "#f0c030", caretColor: "#f0c030" }}
