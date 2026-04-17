@@ -5,7 +5,7 @@ const CITIES = [
   { id: 2, name: "Tokyo",    code: "jp" },
   { id: 3, name: "New York", code: "us" },
   { id: 4, name: "London",   code: "gb" },
-  { id: 5, name: "Dubai",    code: "ae" },
+  { id: 5, name: "Winnipeg", code: "ca" },
 ];
 
 const TopButtons = ({ setQuery, onSelect }) => (
