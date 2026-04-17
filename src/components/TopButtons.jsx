@@ -8,12 +8,12 @@ const CITIES = [
   { id: 5, name: "Dubai",    flag: "🇦🇪" },
 ];
 
-const TopButtons = ({ setQuery }) => (
+const TopButtons = ({ setQuery, onSelect }) => (
   <div className="flex flex-wrap gap-1.5">
     {CITIES.map((city) => (
       <button
         key={city.id}
-        onClick={() => setQuery({ q: city.name })}
+        onClick={() => { setQuery({ q: city.name }); onSelect?.(); }}
         aria-label={`Show weather for ${city.name}`}
         className="group relative flex items-center gap-1.5 px-3 py-1.5 font-barlow text-xs tracking-wide uppercase
           bg-[#0a0806] border border-[#f0c030]/20 text-[#f0c030]/55
@@ -29,5 +29,8 @@ const TopButtons = ({ setQuery }) => (
   </div>
 );
 
-TopButtons.propTypes = { setQuery: PropTypes.func.isRequired };
+TopButtons.propTypes = {
+  setQuery: PropTypes.func.isRequired,
+  onSelect: PropTypes.func,
+};
 export default TopButtons;
