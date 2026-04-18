@@ -121,9 +121,9 @@ const App = () => {
           {/* Spacer — only on desktop where there's room */}
           <div className="hidden md:block flex-1 min-w-0" />
 
-          {/* Current city indicator — sm+ only */}
+          {/* Current city indicator — md+ only */}
           {weather && (
-            <div className="hidden sm:flex items-center gap-1.5 shrink-0 px-2.5 py-1 mr-1"
+            <div className="hidden md:flex items-center gap-1.5 shrink-0 px-2.5 py-1 mr-1"
               style={{ border: "1px solid rgba(240,192,48,0.2)", background: "rgba(240,192,48,0.04)" }}>
               <FlagIcon code={weather.country} size={18} />
               <span className="font-bebas text-sm tracking-wider" style={{ color: "#f0c030" }}>{weather.name}</span>
@@ -132,7 +132,7 @@ const App = () => {
           )}
 
           {/* Search — flex-1 on mobile so it fills remaining space, fixed on desktop */}
-          <div className="flex-1 md:flex-none md:w-64 min-w-0">
+          <div className="flex-1 md:flex-none md:w-56 min-w-0">
             <Input setQuery={setQuery} units={units} setUnits={setUnits} compact mobileMinimal />
           </div>
 
@@ -150,6 +150,24 @@ const App = () => {
                 {is24Hour ? "24H" : "12H"}
               </button>
             </div>
+          </div>
+
+          {/* °C / °F toggle — visible on sm+ in nav bar */}
+          <div className="hidden sm:flex border border-[#f0c030]/20 overflow-hidden shrink-0">
+            {["metric", "imperial"].map((u) => (
+              <button
+                key={u}
+                onClick={() => setUnits(u)}
+                className="font-bebas text-xs px-2.5 py-1.5 tracking-widest transition-all duration-150"
+                style={{
+                  color: units === u ? "#0a0806" : "rgba(240,192,48,0.45)",
+                  background: units === u ? "#f0c030" : "#0a0806",
+                }}
+                aria-label={`Switch to ${u === "metric" ? "Celsius" : "Fahrenheit"}`}
+              >
+                {u === "metric" ? "°C" : "°F"}
+              </button>
+            ))}
           </div>
 
           {/* Mobile: hamburger + blink — fixed size, always fits */}
@@ -257,8 +275,8 @@ const App = () => {
           {/* ═══ HERO BAND ═══ */}
           <div className="px-4 sm:px-6 py-4 sm:py-5 shrink-0" style={{ background: "rgba(8,6,4,0.6)" }}>
 
-            {/* Mobile hero: stacked */}
-            <div className="flex flex-col sm:hidden gap-3">
+            {/* Mobile/narrow hero: stacked — shows below md */}
+            <div className="flex flex-col md:hidden gap-3">
               <div className="flex items-end justify-between">
                 <div>
                   <div className="flex items-baseline gap-2">
@@ -294,8 +312,8 @@ const App = () => {
               </div>
             </div>
 
-            {/* Tablet+ hero: horizontal */}
-            <div className="hidden sm:flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+            {/* Desktop hero: horizontal — shows md+ */}
+            <div className="hidden md:flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
               <div>
                 <div className="flex items-baseline gap-3">
                   <h1 className="font-bebas gold-text leading-none"
